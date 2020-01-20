@@ -16,7 +16,7 @@
 
 //Timing variables
 unsigned long moveTimer;
-unsigned long moveTimerTotal;
+unsigned long moveTimerTotal = 0;
 
 
 
@@ -36,7 +36,7 @@ long duration, inches;
 int sensorPin = 10;    // select the input pin for the potentiometer
 int sensorValue = 0;  // variable to store the value coming from the sensor
 int outputValue = 0; // value for pot to minutes map
-int minutes = 0;// minutes to wait before mobing the mouse
+int minutes = 0;// minutes to wait before moving the mouse
  
 void setup() {
   //Serial Port begin
@@ -56,9 +56,18 @@ void loop() {
   inches = getInches();
   UpdateDisplay(inches);
   minutes = Timer();
-  if (millis() < ((minutes*60*1000)-30000){
+  if ((millis()-moveTimerTotal) > ((minutes*60*1000)-30000)){
     ThirtySecondMouseTimer();
+    Serial.println("We hit the countdown for 30 seconds code");
   }
+  Serial.println();
+  Serial.print(millis());
+  Serial.print(" - ");
+  Serial.print((minutes*60*1000)-30000);
+  Serial.print(" = ");
+  Serial.print(millis()-((minutes*60*1000)-30000));
+  Serial.println("");
+  
   
   
 }
@@ -102,11 +111,12 @@ void MoveMouse(int loops) {
 void UpdateDisplay(int nums){
   Serial.print("We're going to write: ");
   Serial.print(nums);
-  Serial.print(" to the display");
+  Serial.println(" to the display");
+  Serial.println("");
   display.showNumberDec(nums, false);
 }
 
-int Timer{}{
+int Timer(){
   sensorValue = analogRead(sensorPin); // read the value from the sensor:
   outputValue = map(sensorValue, 0, 1023, 1, 45);
   Serial.print("Minutes to wait: ");
@@ -115,7 +125,25 @@ int Timer{}{
 }
 
 
-  
 void ThirtySecondMouseTimer(){
-  long currentMills = millis();
+  Serial.println("Start of Thirty Second Timer?");
+  for (int seconds = 30; seconds >= 0; seconds--){
+    UpdateDisplay(seconds);
+    Serial.print("mills passing every seconds is equal to: ");
+    Serial.println(millis());
+    delay(1000);
+    Serial.print("seconds left on timer: ");
+    Serial.println(seconds);
+    Serial.println("");
+    if (seconds = 0){
+      Serial.println("Seconds = zero");
+      int moveInches = getInches();
+      if (moveInches <=8){
+        Serial.println("Something is within 8 inches");
+        MoveMouse(5);
+        moveTimerTotal = millis();
+      }
+      
+    }
+  }
 }
