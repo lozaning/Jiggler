@@ -13,9 +13,18 @@
 #include <TM1637Display.h>
 #include "Mouse.h"
 
+
+//Timing variables
+unsigned long moveTimer;
+unsigned long moveTimerTotal;
+
+
+
 // Pins defined for 7 segment display library
 #define CLK 18
 #define DIO 19
+//Create display object with defined paramaters
+TM1637Display display(CLK, DIO);
 
 
 //Pins defined for the sonar sensor
@@ -23,8 +32,11 @@ int trigPin = 21;    // Trigger
 int echoPin = 20;    // Echo
 long duration, inches;
 
-//Create display object with defined paramaters
-TM1637Display display(CLK, DIO);
+//Variables for the pot
+int sensorPin = 10;    // select the input pin for the potentiometer
+int sensorValue = 0;  // variable to store the value coming from the sensor
+int outputValue = 0; // value for pot to minutes map
+int minutes = 0;// minutes to wait before mobing the mouse
  
 void setup() {
   //Serial Port begin
@@ -36,17 +48,22 @@ void setup() {
 }
  
 void loop() {
- 
-
+  //shit for the display, not sure how often I actually need to call this
   int k;
   uint8_t data[] = { 0xff, 0xff, 0xff, 0xff };
   uint8_t blank[] = { 0x00, 0x00, 0x00, 0x00 };
   display.setBrightness(0x0f);
- 
- 
+  inches = getInches();
+  UpdateDisplay(inches);
+  minutes = Timer();
+  if (millis() < ((minutes*60*1000)-30000){
+    ThirtySecondMouseTimer();
+  }
+  
+  
 }
 
-int getInches() {
+long getInches() {
   long duration, inches;
    // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
   // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
@@ -80,4 +97,25 @@ void MoveMouse(int loops) {
     Mouse.move(0, -20, 0);
     }
   Serial.println("Done moving the mouse");
+}
+
+void UpdateDisplay(int nums){
+  Serial.print("We're going to write: ");
+  Serial.print(nums);
+  Serial.print(" to the display");
+  display.showNumberDec(nums, false);
+}
+
+int Timer{}{
+  sensorValue = analogRead(sensorPin); // read the value from the sensor:
+  outputValue = map(sensorValue, 0, 1023, 1, 45);
+  Serial.print("Minutes to wait: ");
+  Serial.println(outputValue);
+  return outputValue;
+}
+
+
+  
+void ThirtySecondMouseTimer(){
+  long currentMills = millis();
 }
