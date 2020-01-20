@@ -30,8 +30,9 @@ void setup() {
   //Serial Port begin
   Serial.begin (9600);
   //Define inputs and outputs
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);//setup the sonar pin to be an output
+  pinMode(echoPin, INPUT);//setup the sonar pin to be an output
+  Mouse.begin();//start the mouse
 }
  
 void loop() {
@@ -70,6 +71,37 @@ void loop() {
   delay(25);
 }
 
-void MoveMouse() {
-  
+void getInches() {
+   // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+ 
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+ 
+  // Convert the time into a distance
+  inches = (duration/2) / 74;   // Divide by 74 or multiply by 0.0135
+  Serial.print("in: ");
+  Serial.println(inches);
+  return inches
+}
+
+void MoveMouse(squares) {
+  serial.print("Moving the Mouse ");
+  serial.print(squares);
+  serial.println(" times");
+  for (;squares >=0; squares--) {
+  Mouse.move(20, 0, 0);
+  Mouse.move(0, -20, 0);
+  Mouse.move(-20, 0, 0);
+  Mouse.move(0, -20, 0);
+  }
+
 }
