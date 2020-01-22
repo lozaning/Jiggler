@@ -57,15 +57,17 @@ void loop() {
   UpdateDisplay(inches);
   minutes = Timer();
   if ((millis()-moveTimerTotal) > ((minutes*60*1000)-30000)){
+    Serial.println("About to Call 30 second mouse timer");
     ThirtySecondMouseTimer();
-    Serial.println("We hit the countdown for 30 seconds code");
+    Serial.println("Called 30 second mouse timer");
   }
   Serial.println();
-  Serial.print(millis());
-  Serial.print(" - ");
   Serial.print((minutes*60*1000)-30000);
+  Serial.print(" - ");
+  Serial.print(millis()-moveTimerTotal);
+ 
   Serial.print(" = ");
-  Serial.print(millis()-((minutes*60*1000)-30000));
+  Serial.print((((minutes*60*1000)-30000))-(millis()-moveTimerTotal));
   Serial.println("");
   
   
@@ -100,15 +102,20 @@ void MoveMouse(int loops) {
   Serial.print(loops);
   Serial.println(" times");
   for (;loops >=0; loops--) {
+    Mouse.move(0, 20, 0);
+    delay(500);
     Mouse.move(20, 0, 0);
+    delay(500);
     Mouse.move(0, -20, 0);
+    delay(500);
     Mouse.move(-20, 0, 0);
-    Mouse.move(0, -20, 0);
+    delay(500);
     }
   Serial.println("Done moving the mouse");
 }
 
 void UpdateDisplay(int nums){
+  Serial.println("");
   Serial.print("We're going to write: ");
   Serial.print(nums);
   Serial.println(" to the display");
@@ -126,7 +133,7 @@ int Timer(){
 
 
 void ThirtySecondMouseTimer(){
-  Serial.println("Start of Thirty Second Timer?");
+  Serial.println("Start of Thirty Second Timer");
   for (int seconds = 30; seconds >= 0; seconds--){
     UpdateDisplay(seconds);
     Serial.print("mills passing every seconds is equal to: ");
@@ -135,15 +142,16 @@ void ThirtySecondMouseTimer(){
     Serial.print("seconds left on timer: ");
     Serial.println(seconds);
     Serial.println("");
-    if (seconds = 0){
+    if (seconds == 0){
       Serial.println("Seconds = zero");
       int moveInches = getInches();
       if (moveInches <=8){
         Serial.println("Something is within 8 inches");
         MoveMouse(5);
         moveTimerTotal = millis();
-      }
-      
+        }
+      Serial.println("Nothing is in range");
+      moveTimerTotal = millis();
     }
   }
 }
